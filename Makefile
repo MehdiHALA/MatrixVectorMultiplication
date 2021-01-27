@@ -30,5 +30,5 @@ init:
 
 
 clean:
-	rm -f ttmatvec create-ttmat create-ttvec compare-ttvec
+	rm -f ttmatvec create-ttmat create-ttvec compare-ttvec *.bin
 	export OMP_NUM_THREADS=$(NB_THREADS)
