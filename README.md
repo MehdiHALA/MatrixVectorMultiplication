@@ -42,6 +42,6 @@ reference implementation (say "vecy-ref.bin"). You can realize this with the fol
 
 ### Ploting Results
 ```sh
-./generator.sh
-python3 graph.py filename N R
+./generator.sh > testfile
+python3 graph.py testfile 256 8
 ```

@@ -120,12 +120,15 @@ void multiplyTTMatVec(
   memset(y->data, 0, y->dimVecBegin[y->d] * sizeof(y->data[0]));
 
   // Now perform the matrix-vector multiplication in each dimension
+  #pragma omp parallel
+  #pragma single
   for (int d = 0; d < y->d; d++) {
     for (int m = 0; m < A->m[d]; m++) {
       double *ymBlockBegin = getTTVecBlock(y, d, m);
       for (int n = 0; n < A->n[d]; n++) {
         double *AmnBlockBegin = getTTMatBlock(A, d, m, n);
         double *xnBlockBegin = getTTVecBlock(x, d, n);
+        #pragma omp task depend(in: AmnBlockBegin, xnBlockBegin) depend(out: ymBlockBegin)
         multiplyAddKronecker(AmnBlockBegin, A->r[d], A->r[d + 1], xnBlockBegin, x->r[d], x->r[d + 1], ymBlockBegin);
       }
     }

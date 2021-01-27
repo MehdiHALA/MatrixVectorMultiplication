@@ -121,6 +121,7 @@ void multiplyTTMatVec(
 
   // Now perform the matrix-vector multiplication in each dimension
   for (int d = 0; d < y->d; d++) {
+    #pragma omp parallel for firstprivate(A, x, y, d) collapse(2)
     for (int m = 0; m < A->m[d]; m++) {
       double *ymBlockBegin = getTTVecBlock(y, d, m);
       for (int n = 0; n < A->n[d]; n++) {
