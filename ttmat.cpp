@@ -124,17 +124,17 @@ void multiplyTTMatVec(
   //Trying multiple OMP clauses
 
   #ifdef OMP_S
-  #pragma omp parallel for firstprivate(A, x, y) schedule(static)
+  #pragma omp parallel for firstprivate(A, x, y) schedule(static) shared(AmnBlockBegin, xnBlockBegin, ymBlockBegin)
   #endif
   #ifdef OMP_D
-  #pragma omp parallel for firstprivate(A, x, y) schedule(dynamic)
+  #pragma omp parallel for firstprivate(A, x, y) schedule(dynamic) shared(AmnBlockBegin, xnBlockBegin, ymBlockBegin)
   #endif
   #ifdef OMP_TASK
   #pragma omp parallel
   #pragma omp single
   #endif
   #ifdef OMP_COLLAPSE
-  #pragma omp parallel for firstprivate(A, x, y) collapse(2)
+  #pragma omp parallel for firstprivate(A, x, y) shared(AmnBlockBegin, xnBlockBegin, ymBlockBegin) collapse(2)
   #endif
   for (int d = 0; d < y->d; d++) {
     for (int m = 0; m < A->m[d]; m++) {
@@ -143,7 +143,7 @@ void multiplyTTMatVec(
         double *AmnBlockBegin = getTTMatBlock(A, d, m, n);
         double *xnBlockBegin = getTTVecBlock(x, d, n);
         #ifdef OMP_TASK
-        #pragma omp task
+        #pragma omp task depend(in:AmnBlockBegin, xnBlockBegin) depend(out: ymBlockBegin)
         #endif
         multiplyAddKronecker(AmnBlockBegin, A->r[d], A->r[d + 1], xnBlockBegin, x->r[d], x->r[d + 1], ymBlockBegin);
       }
