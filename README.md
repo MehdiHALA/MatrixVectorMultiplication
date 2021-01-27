@@ -38,3 +38,10 @@ reference implementation (say "vecy-ref.bin"). You can realize this with the fol
 ```
 ./compare-ttvec -x vecy.bin -y vecy-ref.bin
 ```
+
+
+### Ploting Results
+```sh
+./generator.sh
+python3 graph.py filename N R
+```
