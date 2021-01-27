@@ -17,7 +17,12 @@ compare-ttvec: compare-ttvec.cpp ttvec.cpp
 
 NB_THREADS = 20
 N = 1024
+n = 256
 R = 8
+
+init-small:
+	./create-ttmat -f ttmat.bin -d 3 -m $(n),$(n),$(n) -n $(n),$(n),$(n) -r $(R),$(R)
+	./create-ttvec -f ttvec.bin -d 3 -m $(n),$(n),$(n) -r $(R),$(R)
 
 init:
 	./create-ttmat -f ttmat.bin -d 3 -m $(N),$(N),$(N) -n $(N),$(N),$(N) -r $(R),$(R)
