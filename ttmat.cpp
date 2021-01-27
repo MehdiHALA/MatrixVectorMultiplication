@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <cstddef>
 #include <cstring>
+#include <omp.h>
 #include "ttmat.h"
 
 void loadTTMat(
@@ -18,7 +19,7 @@ void loadTTMat(
   mat->r = (int *)malloc((mat->d + 1) * sizeof(mat->r[0]));
   mat->r[0] = mat->r[mat->d] = 1; // The first and the last ranks are always one.
   fread(mat->r + 1, sizeof(mat->r[0]), mat->d - 1, file); // Read the remaining D - 1 ranks
-  mat->dimMatBegin = (size_t *)malloc((mat->d + 1) * sizeof(mat->dimMatBegin[0])); 
+  mat->dimMatBegin = (size_t *)malloc((mat->d + 1) * sizeof(mat->dimMatBegin[0]));
   mat->dimMatBegin[0] = 0;
   for (int d = 0; d < mat->d; d++) { // Setup pointers for the beginning of data for the matrix of each dimension
     // Each dimension has a matrix of size m[d] x n[d], each element of this matrix is of size r[d] x r[d + 1].
@@ -119,12 +120,31 @@ void multiplyTTMatVec(
   memset(y->data, 0, y->dimVecBegin[y->d] * sizeof(y->data[0]));
 
   // Now perform the matrix-vector multiplication in each dimension
+
+  //Trying multiple OMP clauses
+
+  #ifdef OMP_S
+  #pragma omp parallel for firstprivate(A, x, y) schedule(static)
+  #endif
+  #ifdef OMP_D
+  #pragma omp parallel for firstprivate(A, x, y) schedule(dynamic)
+  #endif
+  #ifdef OMP_TASK
+  #pragma omp parallel
+  #pragma omp single
+  #endif
+  #ifdef OMP_COLLAPSE
+  #pragma omp parallel for firstprivate(A, x, y) collapse(2)
+  #endif
   for (int d = 0; d < y->d; d++) {
     for (int m = 0; m < A->m[d]; m++) {
       double *ymBlockBegin = getTTVecBlock(y, d, m);
       for (int n = 0; n < A->n[d]; n++) {
         double *AmnBlockBegin = getTTMatBlock(A, d, m, n);
         double *xnBlockBegin = getTTVecBlock(x, d, n);
+        #ifdef OMP_TASK
+        #pragma omp task
+        #endif
         multiplyAddKronecker(AmnBlockBegin, A->r[d], A->r[d + 1], xnBlockBegin, x->r[d], x->r[d + 1], ymBlockBegin);
       }
     }
