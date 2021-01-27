@@ -1,9 +1,15 @@
 CPP_FLAGS=-O3 -march=native -mtune=native -std=c++11 -fopenmp -mavx
 
-all: create-ttmat create-ttvec compare-ttvec ttmatvec
+all: create-ttmat create-ttvec compare-ttvec ttmatvec ttmatvec-omp ttmatvec-task 
 
 ttmatvec: ttmatvec.cpp ttmat.cpp ttmat.h ttvec.cpp ttvec.h
 	g++ ttmatvec.cpp ttmat.cpp ttvec.cpp -lm -o ttmatvec
+
+ttmatvec-omp: ttmatvec.cpp ttmat-omp.cpp ttmat.h ttvec.cpp ttvec.h
+	g++ ttmatvec.cpp ttmat-omp.cpp ttvec.cpp -lm -o ttmatvec
+
+ttmatvec-task: ttmatvec.cpp ttmat-task.cpp ttmat.h ttvec.cpp ttvec.h
+	g++ ttmatvec.cpp ttmat-task.cpp ttvec.cpp -lm -o ttmatvec
 
 create-ttmat: create-ttmat.cpp
 	g++ ${CPP_FLAGS} create-ttmat.cpp -o create-ttmat
@@ -13,6 +19,14 @@ create-ttvec: create-ttvec.cpp
 
 compare-ttvec: compare-ttvec.cpp ttvec.cpp
 	g++ ${CPP_FLAGS} compare-ttvec.cpp ttvec.cpp -lm -o compare-ttvec
+
+perf: ttmatvec.cpp ttmat.cpp ttmat-omp.cpp ttmat-task.cpp ttmat.h ttvec.cpp ttvec.h
+	make ttmatvec
+	./generator.sh > seq.txt
+	make ttmatvec-omp
+	./generator.sh > omp.txt
+	make ttmatvec-task
+	./generator.sh > task.txt
 
 
 NB_THREADS = 20
