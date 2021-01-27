@@ -123,8 +123,8 @@ void multiplyTTMatVec(
   for (int d = 0; d < y->d; d++) {
     #pragma omp parallel for firstprivate(A, x, y, d) collapse(2)
     for (int m = 0; m < A->m[d]; m++) {
-      double *ymBlockBegin = getTTVecBlock(y, d, m);
       for (int n = 0; n < A->n[d]; n++) {
+        double *ymBlockBegin = getTTVecBlock(y, d, m);
         double *AmnBlockBegin = getTTMatBlock(A, d, m, n);
         double *xnBlockBegin = getTTVecBlock(x, d, n);
         multiplyAddKronecker(AmnBlockBegin, A->r[d], A->r[d + 1], xnBlockBegin, x->r[d], x->r[d + 1], ymBlockBegin);
