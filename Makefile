@@ -33,7 +33,7 @@ perf: ttmatvec.cpp ttmat.cpp ttmat_omp.cpp ttmat_task.cpp ttmat.h ttvec.cpp ttve
 
 NB_THREADS = 20
 N = 1024
-n = 256
+n = 64
 R = 8
 
 init-small:

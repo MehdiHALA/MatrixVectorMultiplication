@@ -41,7 +41,17 @@ reference implementation (say "vecy-ref.bin"). You can realize this with the fol
 
 
 ### Ploting Results
+Once you execute the following command :
 ```sh
-./generator.sh > testfile
-python3 graph.py testfile 256 8
+make perf
 ```
+You will get a graph of the performances of the 3 versions named plot_perf.png
+
+
+### Result so far
+
+(plot_perf.png)
+
+**Processor:** Intel Xeon CPU E5-2670 v2 @ 2.50GHz
+
+**Compiler:** gcc 9.1.0

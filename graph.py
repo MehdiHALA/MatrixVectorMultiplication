@@ -11,7 +11,7 @@ def dump(file1, file2):
 
 def main():
     args = sys.argv[1:]
-    if (len(args) != 3):
+    if (len(args) != 2):
         N = 1024
         R = 8
         print("Number of args is not 2! N is set to 1024 and R to 8. Please reexecute with python3 graph.py N R")
