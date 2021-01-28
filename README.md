@@ -50,7 +50,7 @@ You will get a graph of the performances of the 3 versions named plot_perf.png
 
 ### Result so far
 
-(plot_perf.png)
+![perf](plot_perf.png)
 
 **Processor:** Intel Xeon CPU E5-2670 v2 @ 2.50GHz
 
